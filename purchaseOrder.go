@@ -50,7 +50,6 @@ func(t *PurchaseOrder) createPO(stub shim.ChaincodeStubInterface, args []string)
 	
 	payload := args[0]
 	who := args[1]
-	
 	fmt.Println("new Payload is " + payload)
 	//validate new po
 	valMsg := t.validatePO(who, payload)
@@ -76,8 +75,13 @@ func (t *PurchaseOrder) validatePO(who string, payload string) string {
 	var ufaDetails map[string]string
 
 	logger.Info("validateNewPO")
+	logger.Info(ufaDetails["Currency"])
 	if who == "IMPORTER BANK" {
 		json.Unmarshal([]byte(payload), &ufaDetails)
+		if ufaDetails["Currency"] != "Rs"{
+			
+			validationMessage.WriteString("\naIncorrect PurchaseOrder")
+		}
 		//Now check individual fields
 		
 	} else {

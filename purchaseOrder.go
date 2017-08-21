@@ -54,7 +54,7 @@ func(t *PurchaseOrder) createPO(stub shim.ChaincodeStubInterface, args []string)
 	//validate new po
 	valMsg := t.validatePO(who, payload)
 	// for getting uniqueId, this'll give new id per second
-	 poNo:= time.Now().Local().Format("20060102150405")
+	 poNo:= "1"//time.Now().Local().Format("20060102150405")
 	//If there is no error messages then create the UFA	
 	if valMsg == "" {
 		stub.PutState(poNo, []byte(payload))

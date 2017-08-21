@@ -57,7 +57,7 @@ func(t *PurchaseOrder) createPO(stub shim.ChaincodeStubInterface, args []string)
 	 poNo:= "1"//time.Now().Local().Format("20060102150405")
 	//If there is no error messages then create the UFA	
 	if valMsg == "" {
-		stub.PutState(poNo, []byte(payload))
+		stub.PutState("2", []byte(payload))
 		fmt.Println("new poNo is " + poNo)
 		//t.updateMasterRecords(stub, poNo)
 			logger.Info("Created the PO after successful validation : " + payload)

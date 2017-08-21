@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"time"
+	//"time"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 

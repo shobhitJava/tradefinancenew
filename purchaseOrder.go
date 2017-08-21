@@ -59,7 +59,8 @@ func(t *PurchaseOrder) createPO(stub shim.ChaincodeStubInterface, args []string)
 	//If there is no error messages then create the UFA	
 	if valMsg == "" {
 		stub.PutState(poNo, []byte(payload))
-		t.updateMasterRecords(stub, poNo)
+		fmt.Println("new poNo is " + poNo)
+		//t.updateMasterRecords(stub, poNo)
 			logger.Info("Created the PO after successful validation : " + payload)
 	} else {
 		return nil, errors.New("Validation failure: " + valMsg)

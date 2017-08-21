@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	//"time"
+	"time"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -48,28 +48,22 @@ func (t *PurchaseOrder) Init(stub shim.ChaincodeStubInterface, function string, 
 // Creating a new Purchase Order
 func(t *PurchaseOrder) createPO(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	
-//	payload := args[0]
-//	who := args[1]
-//	fmt.Println("new Payload is " + payload)
-	//validate new po
 	payload := args[0]
+	who := args[1]
 	fmt.Println("new Payload is " + payload)
-
-	stub.PutState("2", []byte(payload))
-	
-	
-//	valMsg := t.validatePO(who, payload)
-//	// for getting uniqueId, this'll give new id per second
-//	 poNo:= "1"//time.Now().Local().Format("20060102150405")
-//	//If there is no error messages then create the UFA	
-//	if valMsg == "" {
-//		stub.PutState("2", []byte(payload))
-//		fmt.Println("new poNo is " + poNo)
-//		//t.updateMasterRecords(stub, poNo)
-//			logger.Info("Created the PO after successful validation : " + payload)
-//	} else {
-//		return nil, errors.New("Validation failure: " + valMsg)
-//	}
+	//validate new po
+	valMsg := t.validatePO(who, payload)
+	// for getting uniqueId, this'll give new id per second
+	 poNo:= time.Now().Local().Format("20060102150405")
+	//If there is no error messages then create the UFA	
+	if valMsg == "" {
+		stub.PutState(poNo, []byte(payload))
+		fmt.Println("new poNo is " + poNo)
+		t.updateMasterRecords(stub, poNo)
+			logger.Info("Created the PO after successful validation : " + payload)
+	} else {
+		return nil, errors.New("Validation failure: " + valMsg)
+	}
 	return nil, nil
 }
 
@@ -125,6 +119,7 @@ func (t *PurchaseOrder) getAllPo(stub shim.ChaincodeStubInterface, args []string
 		recBytes, _ := t.getPoDetails(stub, value)
 
 		var record map[string]string
+		record["ContractId"]=value
 		json.Unmarshal(recBytes, &record)
 		allApp = append(allApp, record)
 	}

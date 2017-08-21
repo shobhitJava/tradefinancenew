@@ -45,44 +45,21 @@ func (t *PurchaseOrder) Init(stub shim.ChaincodeStubInterface, function string, 
 	return nil, nil
 }
 
-// Invoke entry point
-func (t *PurchaseOrder) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	
-	if function == "createPO" {
-		createPO(stub, args)
-	} 
-
-	return nil, nil
-}
-
-// Query the rcords form the  smart contracts
-func (t *PurchaseOrder) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	logger.Info("Query called")
-	if function == "getPoDetails" {
-		return getPoDetails(stub, args[0])
-	} else if function == "getAllPo" {
-		return getAllPo(stub, args)
-	} 
-	 
-	return nil, nil
-}
-
-
 // Creating a new Purchase Order
-func createPO(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func(t *PurchaseOrder) createPO(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	
 	payload := args[0]
 	who := args[1]
 	
 	fmt.Println("new Payload is " + payload)
 	//validate new po
-	valMsg := validatePO(who, payload)
+	valMsg := t.validatePO(who, payload)
 	// for getting uniqueId, this'll give new id per second
 	 poNo:= time.Now().Local().Format("20060102150405")
 	//If there is no error messages then create the UFA	
 	if valMsg == "" {
 		stub.PutState(poNo, []byte(payload))
-		updateMasterRecords(stub, poNo)
+		t.updateMasterRecords(stub, poNo)
 			logger.Info("Created the PO after successful validation : " + payload)
 	} else {
 		return nil, errors.New("Validation failure: " + valMsg)
@@ -91,7 +68,7 @@ func createPO(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 }
 
 //Validate a PO
-func validatePO(who string, payload string) string {
+func (t *PurchaseOrder) validatePO(who string, payload string) string {
 
 	//As of now I am checking if who is of proper role
 	var validationMessage bytes.Buffer
@@ -110,7 +87,7 @@ func validatePO(who string, payload string) string {
 }
 
 //Append a newPO number to the master list
-func updateMasterRecords(stub shim.ChaincodeStubInterface, poNo string) error {
+func (t *PurchaseOrder) updateMasterRecords(stub shim.ChaincodeStubInterface, poNo string) error {
 	var recordList []string
 	recBytes, _ := stub.GetState(ALL_PO)
 
@@ -125,7 +102,7 @@ func updateMasterRecords(stub shim.ChaincodeStubInterface, poNo string) error {
 	return nil
 }
 //get all the newPo
-func getAllPo(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func (t *PurchaseOrder) getAllPo(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	logger.Info("getAllPo called")
 	var allApp []map[string]string
 	recordsList, err := getAllRecordsList(stub)
@@ -133,7 +110,7 @@ func getAllPo(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 		return nil, errors.New("Unable to get all the records ")
 	}
 	for _, value := range recordsList {
-		recBytes, _ := getPoDetails(stub, value)
+		recBytes, _ := t.getPoDetails(stub, value)
 
 		var record map[string]string
 		json.Unmarshal(recBytes, &record)
@@ -156,7 +133,7 @@ func getAllRecordsList(stub shim.ChaincodeStubInterface) ([]string, error) {
 	return recordList, nil
 }
 //Get a single PO
-func getPoDetails(stub shim.ChaincodeStubInterface, args string) ([]byte, error) {
+func (t *PurchaseOrder) getPoDetails(stub shim.ChaincodeStubInterface, args string) ([]byte, error) {
 	logger.Info("getPoDetails called with PO number: " + args)
 	var jsonResp string
 	poNumber := args //PO num

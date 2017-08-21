@@ -124,6 +124,7 @@ func (t *TF) Init(stub shim.ChaincodeStubInterface, function string, args []stri
 	t.invoice.Init(stub, function, args)
 	t.pl.Init(stub, function, args)
 	t.po.Init(stub, function, args)
+	
 	return nil, nil
 }
 
@@ -1744,7 +1745,9 @@ func (t *TF) crossCheckDocs(args []string) (bool, error) {
 		}
 
 		return nil, nil
-	}
+	}else if function == "createPO" {
+		t.po.createPO(stub, args)
+	} 
 
 	return nil, errors.New("Invalid invoke function name.")
 }
@@ -1970,7 +1973,11 @@ func (t *TF) Query(stub shim.ChaincodeStubInterface, function string, args []str
 				return []byte("true"),nil
 			}
 		
-	}
+	}else if function == "getPoDetails" {
+		return t.po.getPoDetails(stub, args[0])
+	} else if function == "getAllPo" {
+		return t.po.getAllPo(stub, args)
+	} 
 
 	return nil, errors.New("Invalid query function name.")
 }

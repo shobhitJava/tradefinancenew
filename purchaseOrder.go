@@ -75,11 +75,11 @@ func (t *PurchaseOrder) validatePO(who string, payload string) string {
 	var ufaDetails map[string]string
 
 	logger.Info("validateNewPO")
-	logger.Info(ufaDetails["Currency"])
+	
 	if who == "IMPORTER BANK" {
 		json.Unmarshal([]byte(payload), &ufaDetails)
 		if ufaDetails["Currency"] != "Rs"{
-			
+			logger.Info(ufaDetails["Currency"])
 			validationMessage.WriteString("\naIncorrect PurchaseOrder")
 		}
 		//Now check individual fields
@@ -88,6 +88,7 @@ func (t *PurchaseOrder) validatePO(who string, payload string) string {
 		validationMessage.WriteString("\naAccess Denied to create a PO")
 	}
 	logger.Info("Validation messagge " + validationMessage.String())
+	logger.Info(ufaDetails["Currency"])
 	return validationMessage.String()
 }
 

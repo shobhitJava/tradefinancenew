@@ -120,8 +120,8 @@ func (t *PurchaseOrder) getAllPo(stub shim.ChaincodeStubInterface, args []string
 		recBytes, _ := t.getPoDetails(stub, value)
 
 		var record map[string]string
-		record["ContractId"]=value
 		json.Unmarshal(recBytes, &record)
+		record["ContractId"]=value
 		outputRecords = append(outputRecords, record)
 	}
 	outputBytes, _ := json.Marshal(outputRecords)

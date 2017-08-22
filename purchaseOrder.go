@@ -110,20 +110,21 @@ func (t *PurchaseOrder) updateMasterRecords(stub shim.ChaincodeStubInterface, po
 //get all the newPo
 func (t *PurchaseOrder) getAllPo(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	logger.Info("getAllPo called")
-	var allApp []map[string]string
 	recordsList, err := getAllRecordsList(stub)
 	if err != nil {
 		return nil, errors.New("Unable to get all the records ")
 	}
+	var outputRecords []map[string]string
+	outputRecords = make([]map[string]string, 0)
 	for _, value := range recordsList {
 		recBytes, _ := t.getPoDetails(stub, value)
 
 		var record map[string]string
 		record["ContractId"]=value
 		json.Unmarshal(recBytes, &record)
-		allApp = append(allApp, record)
+		outputRecords = append(outputRecords, record)
 	}
-	outputBytes, _ := json.Marshal(allApp)
+	outputBytes, _ := json.Marshal(outputRecords)
 	logger.Info("Returning records from getAllPo " + string(outputBytes))
 	return outputBytes, nil
 }

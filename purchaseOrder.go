@@ -76,12 +76,12 @@ func (t *PurchaseOrder) validatePO(who string, payload string) string {
 
 	logger.Info("validateNewPO")
 	
-	if who == "IMPORTER BANK" {
+	if who == "IMPORTER" {
 		json.Unmarshal([]byte(payload), &ufaDetails)
-		if ufaDetails["Currency"] != "Rs"{
-			logger.Info(ufaDetails["Currency"])
-			validationMessage.WriteString("\naIncorrect PurchaseOrder")
-		}
+//		if ufaDetails["Currency"] != "Rs"{
+//			logger.Info(ufaDetails["Currency"])
+//			validationMessage.WriteString("\naIncorrect PurchaseOrder")
+//		}
 		//Now check individual fields
 		
 	} else {
@@ -128,6 +128,55 @@ func (t *PurchaseOrder) getAllPo(stub shim.ChaincodeStubInterface, args []string
 	logger.Info("Returning records from getAllPo " + string(outputBytes))
 	return outputBytes, nil
 }
+//get all the o for an exporterBank
+func (t *PurchaseOrder) getAllPoForExporterBank(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	logger.Info("getAllPoForExporterBank called")
+	recordsList, err := getAllRecordsList(stub)
+	if err != nil {
+		return nil, errors.New("Unable to get all the records ")
+	}
+	var outputRecords []map[string]string
+	outputRecords = make([]map[string]string, 0)
+	for _, value := range recordsList {
+		recBytes, _ := t.getPoDetails(stub, value)
+
+		var record map[string]string
+		json.Unmarshal(recBytes, &record)
+		record["ContractId"]=value
+		if args[0]==record["ExporterBank"]{
+		outputRecords = append(outputRecords, record)
+		}
+	}
+	outputBytes, _ := json.Marshal(outputRecords)
+	logger.Info("Returning records from getAllPo " + string(outputBytes))
+	return outputBytes, nil
+}
+//get all the o for an exporterBank
+func (t *PurchaseOrder) getAllPoForExporter(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	logger.Info("getAllPoForExporter called")
+	recordsList, err := getAllRecordsList(stub)
+	if err != nil {
+		return nil, errors.New("Unable to get all the records ")
+	}
+	var outputRecords []map[string]string
+	outputRecords = make([]map[string]string, 0)
+	for _, value := range recordsList {
+		recBytes, _ := t.getPoDetails(stub, value)
+
+		var record map[string]string
+		json.Unmarshal(recBytes, &record)
+		record["ContractId"]=value
+		if args[0]==record["Exporter"]{
+		outputRecords = append(outputRecords, record)
+		}
+	}
+	outputBytes, _ := json.Marshal(outputRecords)
+	logger.Info("Returning records from getAllPo " + string(outputBytes))
+	return outputBytes, nil
+}
+
+
+
 //Returns all the Po Numbers stored
 func getAllRecordsList(stub shim.ChaincodeStubInterface) ([]string, error) {
 	var recordList []string

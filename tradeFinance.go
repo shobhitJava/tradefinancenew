@@ -1938,6 +1938,10 @@ func (t *TF) Query(stub shim.ChaincodeStubInterface, function string, args []str
 		return t.po.getPoDetails(stub, args[0])
 	} else if function == "getAllPo" {
 		return t.po.getAllPo(stub, args)
+	} else if function == "getAllPoForExporter" {
+		return t.po.getAllPoForExporter(stub, args)
+	} else if function == "getAllPoForExporterBank" {
+		return t.po.getAllPoForExporterBank(stub, args)
 	}
 
 	return nil, errors.New("Invalid query function name.")

@@ -209,4 +209,37 @@ func (t *PurchaseOrder) getPoDetails(stub shim.ChaincodeStubInterface, args stri
 	return recBytes, nil
 }
 
+//update the PO
+func (t *PurchaseOrder) updatePOStatus(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+
+	var po map[string]string
+	var jsonResp string
+	logger.Info("updatePO called ")
+
+	poNumber := args[0] //PO num
+	//who :=args[1] //Role
+	if args[2]=="Exporter"{
+	recBytes, err := stub.GetState(poNumber)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+	if recBytes == nil{
+		jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
+		return []byte(jsonResp),nil
+	
+	}
+	newerr := json.Unmarshal(recBytes, &po)
+	if newerr != nil {
+		return nil, errors.New("Failed to unmarshal getAllRecordsList ")
+	}
+	po["Status"]=args[1]
+		outputBytes, _ := json.Marshal(po)
+	stub.PutState(poNumber, outputBytes)
+	}else{
+		return nil, errors.New("Not Authorized to access this service ")
+	}
+	return nil, nil
+
+}
 

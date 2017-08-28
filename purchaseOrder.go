@@ -205,7 +205,7 @@ func (t *PurchaseOrder) getPoDetails(stub shim.ChaincodeStubInterface, args stri
 		return []byte(jsonResp),nil
 	
 	}
-	logger.Info("Returning records from getUFADetails " + string(recBytes))
+	logger.Info("Returning records from getPODetails " + string(recBytes))
 	return recBytes, nil
 }
 
@@ -241,5 +241,68 @@ func (t *PurchaseOrder) updatePOStatus(stub shim.ChaincodeStubInterface, args []
 	}
 	return nil, nil
 
+}
+
+//upload the bol
+func (t *PurchaseOrder) uploadBOL(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+
+	var po map[string]string
+	var jsonResp string
+	logger.Info("updateBOL called ")
+
+	poNumber := args[0] //PO num
+	//who :=args[1] //Role
+	
+	recBytes, err := stub.GetState(poNumber)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+	if recBytes == nil{
+		jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
+		return []byte(jsonResp),nil
+	
+	}
+	newerr := json.Unmarshal(recBytes, &po)
+	if newerr != nil {
+		return nil, errors.New("Failed to unmarshal getAllRecordsList ")
+	}
+	po["BOL"]=args[1]
+		outputBytes, _ := json.Marshal(po)
+	stub.PutState(poNumber, outputBytes)
+	
+	return nil, nil
+
+}
+
+//upload the boe
+func (t *PurchaseOrder) uploadBOE(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+
+	var po map[string]string
+	var jsonResp string
+	logger.Info("updateBOE called ")
+
+	poNumber := args[0] //PO num
+	//who :=args[1] //Role
+	
+	recBytes, err := stub.GetState(poNumber)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+	if recBytes == nil{
+		jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
+		return []byte(jsonResp),nil
+	
+	}
+	newerr := json.Unmarshal(recBytes, &po)
+	if newerr != nil {
+		return nil, errors.New("Failed to unmarshal getAllRecordsList ")
+	}
+	po["BOE"]=args[1]
+		outputBytes, _ := json.Marshal(po)
+	stub.PutState(poNumber, outputBytes)
+	
+	return nil, nil
 }
 

@@ -4,8 +4,6 @@ package main
 // - validation for number of argumants 10 in submitLC as client code could not pass cert arguments, so save certs as blank
 // - Removed logging related stuff as the package could not be found on bluemix service
 // - Hardcoded Certs to blank in SubmitLC
-// Shobhit Srivastava  24-08-2017
-//added query methods for creation, updatio nand fetching of PurchaseOrder
 
 import (
 	"encoding/json"
@@ -1713,8 +1711,13 @@ func (t *TF) Invoke(stub shim.ChaincodeStubInterface, function string, args []st
 	}else if function == "updatePOStatus" {
 
 		return t.po.updatePOStatus(stub, args)
-	}
+	}else if function == "uploadBOL" {
 
+		return t.po.uploadBOL(stub, args)
+	}else if function == "uploadBOE" {
+
+		return t.po.uploadBOE(stub, args)
+	}
 	return nil, errors.New("Invalid invoke function name.")
 }
 

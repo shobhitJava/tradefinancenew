@@ -344,4 +344,3 @@ func (t *PurchaseOrder) uploadBOE(stub shim.ChaincodeStubInterface, args []strin
 	return nil, nil
 }
 
-a

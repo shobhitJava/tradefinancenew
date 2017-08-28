@@ -51,6 +51,7 @@ func(t *PurchaseOrder) createPO(stub shim.ChaincodeStubInterface, args []string)
 	payload := args[0]
 	who := args[1]
 	fmt.Println("new Payload is " + payload)
+		logger.Info(who)
 	//validate new po
 	valMsg := t.validatePO(who, payload)
 	// for getting uniqueId, this'll give new id per second
@@ -76,7 +77,7 @@ func (t *PurchaseOrder) validatePO(who string, payload string) string {
 
 	logger.Info("validateNewPO")
 	
-	if who == "IMPORTER" {
+	if who == "Importer" {
 		json.Unmarshal([]byte(payload), &ufaDetails)
 //		if ufaDetails["Currency"] != "Rs"{
 //			logger.Info(ufaDetails["Currency"])
@@ -88,7 +89,7 @@ func (t *PurchaseOrder) validatePO(who string, payload string) string {
 		validationMessage.WriteString("\naAccess Denied to create a PO")
 	}
 	logger.Info("Validation messagge " + validationMessage.String())
-	logger.Info(ufaDetails["Currency"])
+	//logger.Info(ufaDetails["Currency"])
 	return validationMessage.String()
 }
 

@@ -1717,6 +1717,9 @@ func (t *TF) Invoke(stub shim.ChaincodeStubInterface, function string, args []st
 	}else if function == "uploadBOE" {
 
 		return t.po.uploadBOE(stub, args)
+	}else if function == "updatePODetails" {
+
+		return t.po.updatePODetails(stub, args)
 	}
 	return nil, errors.New("Invalid invoke function name.")
 }

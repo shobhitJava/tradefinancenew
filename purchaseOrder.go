@@ -266,7 +266,7 @@ func (t *PurchaseOrder) updatePODetails(stub shim.ChaincodeStubInterface, args [
 	}
 	newerr := json.Unmarshal(recBytes, &po)
 	if newerr != nil {
-		return nil, errors.New("Failed to unmarshal getAllRecordsList ")
+		return nil, errors.New("Failed to unmarshal getRecord ")
 	}
 	po["ExporterBank"]=args[1]
 	po["IsLCRequired"]=args[2]
@@ -303,7 +303,7 @@ func (t *PurchaseOrder) uploadBOL(stub shim.ChaincodeStubInterface, args []strin
 	}
 	newerr := json.Unmarshal(recBytes, &po)
 	if newerr != nil {
-		return nil, errors.New("Failed to unmarshal getAllRecordsList ")
+		return nil, errors.New("Failed to unmarshal getRecord ")
 	}
 	po["BOL"]=args[1]
 		outputBytes, _ := json.Marshal(po)
@@ -335,7 +335,7 @@ func (t *PurchaseOrder) uploadBOE(stub shim.ChaincodeStubInterface, args []strin
 	}
 	newerr := json.Unmarshal(recBytes, &po)
 	if newerr != nil {
-		return nil, errors.New("Failed to unmarshal getAllRecordsList ")
+		return nil, errors.New("Failed to unmarshal getRecord ")
 	}
 	po["BOE"]=args[1]
 		outputBytes, _ := json.Marshal(po)
@@ -344,3 +344,64 @@ func (t *PurchaseOrder) uploadBOE(stub shim.ChaincodeStubInterface, args []strin
 	return nil, nil
 }
 
+//upload the boe
+func (t *PurchaseOrder) uploadLC(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+
+	var po map[string]string
+	var jsonResp string
+	logger.Info("uploadLC called ")
+
+	poNumber := args[0] //PO num
+	//who :=args[1] //Role
+	
+	recBytes, err := stub.GetState(poNumber)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+	if recBytes == nil{
+		jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
+		return []byte(jsonResp),nil
+	
+	}
+	newerr := json.Unmarshal(recBytes, &po)
+	if newerr != nil {
+		return nil, errors.New("Failed to unmarshal getRecord ")
+	}
+	po["LC"]=args[1]
+		outputBytes, _ := json.Marshal(po)
+	stub.PutState(poNumber, outputBytes)
+	
+	return nil, nil
+}
+
+//upload the boe
+func (t *PurchaseOrder) uploadInvoice(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+
+	var po map[string]string
+	var jsonResp string
+	logger.Info("uploadInvoice called ")
+
+	poNumber := args[0] //PO num
+	//who :=args[1] //Role
+	
+	recBytes, err := stub.GetState(poNumber)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+	if recBytes == nil{
+		jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
+		return []byte(jsonResp),nil
+	
+	}
+	newerr := json.Unmarshal(recBytes, &po)
+	if newerr != nil {
+		return nil, errors.New("Failed to unmarshal getRecord")
+	}
+	po["Invoice"]=args[1]
+		outputBytes, _ := json.Marshal(po)
+	stub.PutState(poNumber, outputBytes)
+	
+	return nil, nil
+}

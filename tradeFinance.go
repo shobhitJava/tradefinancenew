@@ -1720,7 +1720,14 @@ func (t *TF) Invoke(stub shim.ChaincodeStubInterface, function string, args []st
 	}else if function == "updatePODetails" {
 
 		return t.po.updatePODetails(stub, args)
+	}else if function == "uploadLC" {
+
+		return t.po.uploadLC(stub, args)
+	}else if function == "uploadInvoice" {
+
+		return t.po.uploadInvoice(stub, args)
 	}
+	
 	return nil, errors.New("Invalid invoke function name.")
 }
 

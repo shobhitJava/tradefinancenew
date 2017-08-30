@@ -433,4 +433,30 @@ func (t *PurchaseOrder) getAllBOLShippingCompany(stub shim.ChaincodeStubInterfac
 	return outputBytes, nil
 }
 
+//get all docs for PO
+func (t *PurchaseOrder) getAllDocsPO(stub shim.ChaincodeStubInterface, args string) ([]byte, error) {
+	logger.Info("getAllDocs called")
+	var outputRecords []map[string]string
+	outputRecords = make([]map[string]string, 0)
+
+		recBytes, _ := t.getPoDetails(stub, args)
+		var record map[string]string
+		json.Unmarshal(recBytes, &record)
+			var bol map[string]string
+			json.Unmarshal([]byte(record["BOL"]), &bol)
+			outputRecords = append(outputRecords,bol)
+			var boe map[string]string
+			json.Unmarshal([]byte(record["BOE"]), &boe)
+			outputRecords = append(outputRecords,bol)
+			var invoice map[string]string
+			json.Unmarshal([]byte(record["Invoice"]), &invoice)
+			outputRecords = append(outputRecords,invoice)
+			
+			 
+		
+	
+	outputBytes, _ := json.Marshal(outputRecords)
+	logger.Info("Returning records from getAllDocs " + string(outputBytes))
+	return outputBytes, nil
+}
 

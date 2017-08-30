@@ -459,4 +459,20 @@ func (t *PurchaseOrder) getAllDocsPO(stub shim.ChaincodeStubInterface, args stri
 	logger.Info("Returning records from getAllDocs " + string(outputBytes))
 	return outputBytes, nil
 }
+//get all invoice
+func (t *PurchaseOrder) getInvoice(stub shim.ChaincodeStubInterface, args string) ([]byte, error) {
+	logger.Info("getInvoice called")
+	
+		recBytes, _ := t.getPoDetails(stub, args)
+		var record map[string]string
+		json.Unmarshal(recBytes, &record)
+			
+			var invoice map[string]string
+			json.Unmarshal([]byte(record["Invoice"]), &invoice)
 
+	
+		outputBytes, _ := json.Marshal(invoice)
+		
+	logger.Info("Returning records from invoice " + string(outputBytes))
+	return outputBytes, nil
+}

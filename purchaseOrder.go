@@ -447,7 +447,7 @@ func (t *PurchaseOrder) getAllDocsPO(stub shim.ChaincodeStubInterface, args stri
 			outputRecords = append(outputRecords,bol)
 			var boe map[string]string
 			json.Unmarshal([]byte(record["BOE"]), &boe)
-			outputRecords = append(outputRecords,bol)
+			outputRecords = append(outputRecords,boe)
 			var invoice map[string]string
 			json.Unmarshal([]byte(record["Invoice"]), &invoice)
 			outputRecords = append(outputRecords,invoice)

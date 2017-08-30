@@ -149,7 +149,7 @@ func (t *PurchaseOrder) getAllPoForExporterBank(stub shim.ChaincodeStubInterface
 		}
 	}
 	outputBytes, _ := json.Marshal(outputRecords)
-	logger.Info("Returning records from getAllPo " + string(outputBytes))
+	logger.Info("Returning records from getAllPoExporterBank " + string(outputBytes))
 	return outputBytes, nil
 }
 //get all the o for an exporterBank
@@ -172,7 +172,7 @@ func (t *PurchaseOrder) getAllPoForExporter(stub shim.ChaincodeStubInterface, ar
 		}
 	}
 	outputBytes, _ := json.Marshal(outputRecords)
-	logger.Info("Returning records from getAllPo " + string(outputBytes))
+	logger.Info("Returning records from getAllPoForExporter " + string(outputBytes))
 	return outputBytes, nil
 }
 
@@ -375,7 +375,7 @@ func (t *PurchaseOrder) uploadLC(stub shim.ChaincodeStubInterface, args []string
 	return nil, nil
 }
 
-//upload the boe
+//upload the boe ShippingCompany
 func (t *PurchaseOrder) uploadInvoice(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
 	var po map[string]string
@@ -405,3 +405,32 @@ func (t *PurchaseOrder) uploadInvoice(stub shim.ChaincodeStubInterface, args []s
 	
 	return nil, nil
 }
+
+//get all the po for shipping company
+func (t *PurchaseOrder) getAllBOLShippingCompany(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	logger.Info("getAllBOLshippingCompany called")
+	recordsList, err := getAllRecordsList(stub)
+	if err != nil {
+		return nil, errors.New("Unable to get all the records ")
+	}
+	var outputRecords []map[string]string
+	outputRecords = make([]map[string]string, 0)
+	for _, value := range recordsList {
+		recBytes, _ := t.getPoDetails(stub, value)
+
+		var record map[string]string
+		var bol map[string]string
+		json.Unmarshal(recBytes, &record)
+		record["ContractId"]=value
+		if args[0]==record["ShippingCompany"]{
+			
+			 json.Unmarshal([]byte(record["BOL"]), &bol)
+		outputRecords = append(outputRecords,bol)
+		}
+	}
+	outputBytes, _ := json.Marshal(outputRecords)
+	logger.Info("Returning records from getAllBOLShippingCompany " + string(outputBytes))
+	return outputBytes, nil
+}
+
+

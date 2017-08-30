@@ -1960,6 +1960,8 @@ func (t *TF) Query(stub shim.ChaincodeStubInterface, function string, args []str
 		return t.po.getAllPoForExporter(stub, args)
 	} else if function == "getAllPoForExporterBank" {
 		return t.po.getAllPoForExporterBank(stub, args)
+	}else if function == "getAllBOLForShippingCompany" {
+		return t.po.getAllBOLShippingCompany(stub, args)
 	}
 
 	return nil, errors.New("Invalid query function name.")

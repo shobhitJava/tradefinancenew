@@ -1951,6 +1951,7 @@ func (t *TF) Query(stub shim.ChaincodeStubInterface, function string, args []str
 
 			return []byte("true"), nil
 		}
+		//
 
 	} else if function == "getPoDetails" {
 		return t.po.getPoDetails(stub, args[0])
@@ -1962,6 +1963,8 @@ func (t *TF) Query(stub shim.ChaincodeStubInterface, function string, args []str
 		return t.po.getAllPoForExporterBank(stub, args)
 	}else if function == "getAllBOLForShippingCompany" {
 		return t.po.getAllBOLShippingCompany(stub, args)
+	}else if function == "getAllDocsPO" {
+		return t.po.getAllDocsPO(stub, args[0])
 	}
 
 	return nil, errors.New("Invalid query function name.")

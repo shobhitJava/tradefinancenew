@@ -1,67 +1,67 @@
 package main
 
 import (
-	"encoding/json"
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"time"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
+	"time"
 )
-
 
 //ALL_PO key to refer the purchaseOrder master data
 const ALL_PO = "ALL_PO"
+
 var logger = shim.NewLogger("PurchaseOrder")
 
 type PurchaseOrder struct {
-	RefNo string
-	Importer string
-	Exporter	string
-	Commodity	string
-	Aircompressor	string
-	Currency	string
-	UnitPrice	string
-	Amount	string
-	Quantity	string
-	Weight string
-	TermsofPayment string
-	TermsofTrade string
-	TermsofInsurance string
-	PackingMethod string
+	RefNo               string
+	Importer            string
+	Exporter            string
+	Commodity           string
+	Aircompressor       string
+	Currency            string
+	UnitPrice           string
+	Amount              string
+	Quantity            string
+	Weight              string
+	TermsofPayment      string
+	TermsofTrade        string
+	TermsofInsurance    string
+	PackingMethod       string
 	WayofTransportation string
-	TimeofShipment string
-	PortofShipment string
-	PortofDischarge string
-	PaymentDate string
-	PORejectReason string
+	TimeofShipment      string
+	PortofShipment      string
+	PortofDischarge     string
+	PaymentDate         string
+	PORejectReason      string
 }
 
 //Init initializes the document smart contract
 func (t *PurchaseOrder) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-		//Place an empty arry
+	//Place an empty arry
 	stub.PutState(ALL_PO, []byte("[]"))
 	stub.PutState("id", []byte("1"))
 	return nil, nil
 }
 
 // Creating a new Purchase Order
-func(t *PurchaseOrder) createPO(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	
+func (t *PurchaseOrder) createPO(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+
 	payload := args[0]
 	who := args[1]
 	fmt.Println("new Payload is " + payload)
-		logger.Info(who)
+	logger.Info(who)
 	//validate new po
 	valMsg := t.validatePO(who, payload)
 	// for getting uniqueId, this'll give new id per second
-	 poNo:= time.Now().Local().Format("20060102150405")
-	//If there is no error messages then create the UFA	
+	poNo := time.Now().Local().Format("20060102150405")
+	//If there is no error messages then create the UFA
 	if valMsg == "" {
 		stub.PutState(poNo, []byte(payload))
 		fmt.Println("new poNo is " + poNo)
 		t.updateMasterRecords(stub, poNo)
-			logger.Info("Created the PO after successful validation : " + payload)
+		logger.Info("Created the PO after successful validation : " + payload)
 	} else {
 		return nil, errors.New("Validation failure: " + valMsg)
 	}
@@ -76,15 +76,15 @@ func (t *PurchaseOrder) validatePO(who string, payload string) string {
 	var ufaDetails map[string]string
 
 	logger.Info("validateNewPO")
-	
+
 	if who == "Importer" {
 		json.Unmarshal([]byte(payload), &ufaDetails)
-//		if ufaDetails["Currency"] != "Rs"{
-//			logger.Info(ufaDetails["Currency"])
-//			validationMessage.WriteString("\naIncorrect PurchaseOrder")
-//		}
+		//		if ufaDetails["Currency"] != "Rs"{
+		//			logger.Info(ufaDetails["Currency"])
+		//			validationMessage.WriteString("\naIncorrect PurchaseOrder")
+		//		}
 		//Now check individual fields
-		
+
 	} else {
 		validationMessage.WriteString("\naAccess Denied to create a PO")
 	}
@@ -108,6 +108,7 @@ func (t *PurchaseOrder) updateMasterRecords(stub shim.ChaincodeStubInterface, po
 	stub.PutState(ALL_PO, bytesToStore)
 	return nil
 }
+
 //get all the newPo
 func (t *PurchaseOrder) getAllPo(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	logger.Info("getAllPo called")
@@ -122,13 +123,14 @@ func (t *PurchaseOrder) getAllPo(stub shim.ChaincodeStubInterface, args []string
 
 		var record map[string]string
 		json.Unmarshal(recBytes, &record)
-		record["ContractId"]=value
+		record["ContractId"] = value
 		outputRecords = append(outputRecords, record)
 	}
 	outputBytes, _ := json.Marshal(outputRecords)
 	logger.Info("Returning records from getAllPo " + string(outputBytes))
 	return outputBytes, nil
 }
+
 //get all the o for an exporterBank
 func (t *PurchaseOrder) getAllPoForExporterBank(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	logger.Info("getAllPoForExporterBank called")
@@ -143,15 +145,16 @@ func (t *PurchaseOrder) getAllPoForExporterBank(stub shim.ChaincodeStubInterface
 
 		var record map[string]string
 		json.Unmarshal(recBytes, &record)
-		record["ContractId"]=value
-		if args[0]==record["ExporterBank"]{
-		outputRecords = append(outputRecords, record)
+		record["ContractId"] = value
+		if args[0] == record["ExporterBank"] {
+			outputRecords = append(outputRecords, record)
 		}
 	}
 	outputBytes, _ := json.Marshal(outputRecords)
 	logger.Info("Returning records from getAllPoExporterBank " + string(outputBytes))
 	return outputBytes, nil
 }
+
 //get all the o for an exporterBank
 func (t *PurchaseOrder) getAllPoForExporter(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	logger.Info("getAllPoForExporter called")
@@ -166,17 +169,15 @@ func (t *PurchaseOrder) getAllPoForExporter(stub shim.ChaincodeStubInterface, ar
 
 		var record map[string]string
 		json.Unmarshal(recBytes, &record)
-		record["ContractId"]=value
-		if args[0]==record["Exporter"]{
-		outputRecords = append(outputRecords, record)
+		record["ContractId"] = value
+		if args[0] == record["Exporter"] {
+			outputRecords = append(outputRecords, record)
 		}
 	}
 	outputBytes, _ := json.Marshal(outputRecords)
 	logger.Info("Returning records from getAllPoForExporter " + string(outputBytes))
 	return outputBytes, nil
 }
-
-
 
 //Returns all the Po Numbers stored
 func getAllRecordsList(stub shim.ChaincodeStubInterface) ([]string, error) {
@@ -190,6 +191,7 @@ func getAllRecordsList(stub shim.ChaincodeStubInterface) ([]string, error) {
 
 	return recordList, nil
 }
+
 //Get a single PO
 func (t *PurchaseOrder) getPoDetails(stub shim.ChaincodeStubInterface, args string) ([]byte, error) {
 	logger.Info("getPoDetails called with PO number: " + args)
@@ -201,10 +203,10 @@ func (t *PurchaseOrder) getPoDetails(stub shim.ChaincodeStubInterface, args stri
 		jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
 		return nil, errors.New(jsonResp)
 	}
-	if recBytes == nil{
+	if recBytes == nil {
 		jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
-		return []byte(jsonResp),nil
-	
+		return []byte(jsonResp), nil
+
 	}
 	logger.Info("Returning records from getPODetails " + string(recBytes))
 	return recBytes, nil
@@ -219,25 +221,25 @@ func (t *PurchaseOrder) updatePOStatus(stub shim.ChaincodeStubInterface, args []
 
 	poNumber := args[0] //PO num
 	//who :=args[1] //Role
-	if args[2]=="Exporter"{
-	recBytes, err := stub.GetState(poNumber)
-	if err != nil {
-		jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
-		return nil, errors.New(jsonResp)
-	}
-	if recBytes == nil{
-		jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
-		return []byte(jsonResp),nil
-	
-	}
-	newerr := json.Unmarshal(recBytes, &po)
-	if newerr != nil {
-		return nil, errors.New("Failed to unmarshal getAllRecordsList ")
-	}
-	po["Status"]=args[1]
+	if args[2] == "Exporter" {
+		recBytes, err := stub.GetState(poNumber)
+		if err != nil {
+			jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
+			return nil, errors.New(jsonResp)
+		}
+		if recBytes == nil {
+			jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
+			return []byte(jsonResp), nil
+
+		}
+		newerr := json.Unmarshal(recBytes, &po)
+		if newerr != nil {
+			return nil, errors.New("Failed to unmarshal getAllRecordsList ")
+		}
+		po["Status"] = args[1]
 		outputBytes, _ := json.Marshal(po)
-	stub.PutState(poNumber, outputBytes)
-	}else{
+		stub.PutState(poNumber, outputBytes)
+	} else {
 		return nil, errors.New("Not Authorized to access this service ")
 	}
 	return nil, nil
@@ -253,33 +255,32 @@ func (t *PurchaseOrder) updatePODetails(stub shim.ChaincodeStubInterface, args [
 
 	poNumber := args[0] //PO num
 	//who :=args[1] //Role
-	if args[4]=="Exporter"{
-	recBytes, err := stub.GetState(poNumber)
-	if err != nil {
-		jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
-		return nil, errors.New(jsonResp)
-	}
-	if recBytes == nil{
-		jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
-		return []byte(jsonResp),nil
-	
-	}
-	newerr := json.Unmarshal(recBytes, &po)
-	if newerr != nil {
-		return nil, errors.New("Failed to unmarshal getRecord ")
-	}
-	po["ExporterBank"]=args[1]
-	po["IsLCRequired"]=args[2]
-	po["Status"]=args[3]
+	if args[4] == "Exporter" {
+		recBytes, err := stub.GetState(poNumber)
+		if err != nil {
+			jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
+			return nil, errors.New(jsonResp)
+		}
+		if recBytes == nil {
+			jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
+			return []byte(jsonResp), nil
+
+		}
+		newerr := json.Unmarshal(recBytes, &po)
+		if newerr != nil {
+			return nil, errors.New("Failed to unmarshal getRecord ")
+		}
+		po["ExporterBank"] = args[1]
+		po["IsLCRequired"] = args[2]
+		po["Status"] = args[3]
 		outputBytes, _ := json.Marshal(po)
-	stub.PutState(poNumber, outputBytes)
-	}else{
+		stub.PutState(poNumber, outputBytes)
+	} else {
 		return nil, errors.New("Not Authorized to access this service ")
 	}
 	return nil, nil
 
 }
-
 
 //upload the bol
 func (t *PurchaseOrder) uploadBOL(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
@@ -290,25 +291,25 @@ func (t *PurchaseOrder) uploadBOL(stub shim.ChaincodeStubInterface, args []strin
 
 	poNumber := args[0] //PO num
 	//who :=args[1] //Role
-	
+
 	recBytes, err := stub.GetState(poNumber)
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
 		return nil, errors.New(jsonResp)
 	}
-	if recBytes == nil{
+	if recBytes == nil {
 		jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
-		return []byte(jsonResp),nil
-	
+		return []byte(jsonResp), nil
+
 	}
 	newerr := json.Unmarshal(recBytes, &po)
 	if newerr != nil {
 		return nil, errors.New("Failed to unmarshal getRecord ")
 	}
-	po["BOL"]=args[1]
-		outputBytes, _ := json.Marshal(po)
+	po["BOL"] = args[1]
+	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
-	
+
 	return nil, nil
 
 }
@@ -322,25 +323,25 @@ func (t *PurchaseOrder) uploadBOE(stub shim.ChaincodeStubInterface, args []strin
 
 	poNumber := args[0] //PO num
 	//who :=args[1] //Role
-	
+
 	recBytes, err := stub.GetState(poNumber)
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
 		return nil, errors.New(jsonResp)
 	}
-	if recBytes == nil{
+	if recBytes == nil {
 		jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
-		return []byte(jsonResp),nil
-	
+		return []byte(jsonResp), nil
+
 	}
 	newerr := json.Unmarshal(recBytes, &po)
 	if newerr != nil {
 		return nil, errors.New("Failed to unmarshal getRecord ")
 	}
-	po["BOE"]=args[1]
-		outputBytes, _ := json.Marshal(po)
+	po["BOE"] = args[1]
+	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
-	
+
 	return nil, nil
 }
 
@@ -353,25 +354,25 @@ func (t *PurchaseOrder) uploadLC(stub shim.ChaincodeStubInterface, args []string
 
 	poNumber := args[0] //PO num
 	//who :=args[1] //Role
-	
+
 	recBytes, err := stub.GetState(poNumber)
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
 		return nil, errors.New(jsonResp)
 	}
-	if recBytes == nil{
+	if recBytes == nil {
 		jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
-		return []byte(jsonResp),nil
-	
+		return []byte(jsonResp), nil
+
 	}
 	newerr := json.Unmarshal(recBytes, &po)
 	if newerr != nil {
 		return nil, errors.New("Failed to unmarshal getRecord ")
 	}
-	po["LC"]=args[1]
-		outputBytes, _ := json.Marshal(po)
+	po["LC"] = args[1]
+	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
-	
+
 	return nil, nil
 }
 
@@ -384,25 +385,25 @@ func (t *PurchaseOrder) uploadInvoice(stub shim.ChaincodeStubInterface, args []s
 
 	poNumber := args[0] //PO num
 	//who :=args[1] //Role
-	
+
 	recBytes, err := stub.GetState(poNumber)
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
 		return nil, errors.New(jsonResp)
 	}
-	if recBytes == nil{
+	if recBytes == nil {
 		jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
-		return []byte(jsonResp),nil
-	
+		return []byte(jsonResp), nil
+
 	}
 	newerr := json.Unmarshal(recBytes, &po)
 	if newerr != nil {
 		return nil, errors.New("Failed to unmarshal getRecord")
 	}
-	po["Invoice"]=args[1]
-		outputBytes, _ := json.Marshal(po)
+	po["Invoice"] = args[1]
+	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
-	
+
 	return nil, nil
 }
 
@@ -421,11 +422,11 @@ func (t *PurchaseOrder) getAllBOLShippingCompany(stub shim.ChaincodeStubInterfac
 		var record map[string]string
 		var bol map[string]string
 		json.Unmarshal(recBytes, &record)
-		record["ContractId"]=value
-		if args[0]==record["ShippingCompany"]{
-			
-			 json.Unmarshal([]byte(record["BOL"]), &bol)
-		outputRecords = append(outputRecords,bol)
+		record["ContractId"] = value
+		if args[0] == record["ShippingCompany"] {
+
+			json.Unmarshal([]byte(record["BOL"]), &bol)
+			outputRecords = append(outputRecords, bol)
 		}
 	}
 	outputBytes, _ := json.Marshal(outputRecords)
@@ -439,40 +440,86 @@ func (t *PurchaseOrder) getAllDocsPO(stub shim.ChaincodeStubInterface, args stri
 	var outputRecords []map[string]string
 	outputRecords = make([]map[string]string, 0)
 
-		recBytes, _ := t.getPoDetails(stub, args)
-		var record map[string]string
-		json.Unmarshal(recBytes, &record)
-			var bol map[string]string
-			json.Unmarshal([]byte(record["BOL"]), &bol)
-			outputRecords = append(outputRecords,bol)
-			var boe map[string]string
-			json.Unmarshal([]byte(record["BOE"]), &boe)
-			outputRecords = append(outputRecords,boe)
-			var invoice map[string]string
-			json.Unmarshal([]byte(record["Invoice"]), &invoice)
-			outputRecords = append(outputRecords,invoice)
-			
-			 
-		
-	
+	recBytes, _ := t.getPoDetails(stub, args)
+	var record map[string]string
+	json.Unmarshal(recBytes, &record)
+	var bol map[string]string
+	json.Unmarshal([]byte(record["BOL"]), &bol)
+	outputRecords = append(outputRecords, bol)
+	var boe map[string]string
+	json.Unmarshal([]byte(record["BOE"]), &boe)
+	outputRecords = append(outputRecords, boe)
+	var invoice map[string]string
+	json.Unmarshal([]byte(record["Invoice"]), &invoice)
+	outputRecords = append(outputRecords, invoice)
+
 	outputBytes, _ := json.Marshal(outputRecords)
 	logger.Info("Returning records from getAllDocs " + string(outputBytes))
 	return outputBytes, nil
 }
+
 //get all invoice
 func (t *PurchaseOrder) getInvoice(stub shim.ChaincodeStubInterface, args string) ([]byte, error) {
 	logger.Info("getInvoice called")
-	
-		recBytes, _ := t.getPoDetails(stub, args)
-		var record map[string]string
-		json.Unmarshal(recBytes, &record)
-			
-			var invoice map[string]string
-			json.Unmarshal([]byte(record["Invoice"]), &invoice)
 
-	
-		outputBytes, _ := json.Marshal(invoice)
-		
+	recBytes, _ := t.getPoDetails(stub, args)
+	var record map[string]string
+	json.Unmarshal(recBytes, &record)
+
+	var invoice map[string]string
+	json.Unmarshal([]byte(record["Invoice"]), &invoice)
+
+	outputBytes, _ := json.Marshal(invoice)
+
 	logger.Info("Returning records from invoice " + string(outputBytes))
 	return outputBytes, nil
+}
+
+//get LC
+func (t *PurchaseOrder) getLC(stub shim.ChaincodeStubInterface, args string) ([]byte, error) {
+	logger.Info("getLC called")
+
+	recBytes, _ := t.getPoDetails(stub, args)
+	var record map[string]string
+	json.Unmarshal(recBytes, &record)
+
+	var lc map[string]string
+	json.Unmarshal([]byte(record["LC"]), &lc)
+
+	outputBytes, _ := json.Marshal(lc)
+
+	logger.Info("Returning records from lc " + string(outputBytes))
+	return outputBytes, nil
+}
+
+
+//accept LC
+func (t *PurchaseOrder) acceptLC(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	logger.Info("acceptLC called")
+
+	recBytes, _ := t.getPoDetails(stub, args[0])
+	var record map[string]string
+	json.Unmarshal(recBytes, &record)
+
+	var lc map[string]string
+	json.Unmarshal([]byte(record["LC"]), &lc)
+	lc["LCStatus"] = args[1]
+	outputBytes, _ := json.Marshal(lc)
+	stub.PutState(args[0], outputBytes)
+	return nil, nil
+}
+//accept Invoice
+func (t *PurchaseOrder) acceptInvoice(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	logger.Info("acceptInvoice called")
+
+	recBytes, _ := t.getPoDetails(stub, args[0])
+	var record map[string]string
+	json.Unmarshal(recBytes, &record)
+
+	var lc map[string]string
+	json.Unmarshal([]byte(record["Invoice"]), &lc)
+	lc["InvoiceStatus"] = args[1]
+	outputBytes, _ := json.Marshal(lc)
+	stub.PutState(args[0], outputBytes)
+	return nil, nil
 }

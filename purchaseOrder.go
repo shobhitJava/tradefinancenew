@@ -495,10 +495,10 @@ func (t *PurchaseOrder) getLC(stub shim.ChaincodeStubInterface, args string) ([]
 
 
 //accept LC
-func (t *PurchaseOrder) acceptLC(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func (t *PurchaseOrder) updateLc(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var po map[string]string
 	var jsonResp string
-	logger.Info("acceptInvoice called ")
+	logger.Info("accpetLc called ")
 
 	poNumber := args[0] //PO num
 	//who :=args[1] //Role

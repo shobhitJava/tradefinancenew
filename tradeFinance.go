@@ -1726,6 +1726,12 @@ func (t *TF) Invoke(stub shim.ChaincodeStubInterface, function string, args []st
 	}else if function == "uploadInvoice" {
 
 		return t.po.uploadInvoice(stub, args)
+	}else if function == "acceptLC" {
+
+		return t.po.acceptLC(stub, args)
+	}else if function == "acceptInvoice" {
+
+		return t.po.acceptInvoice(stub, args)
 	}
 	
 	return nil, errors.New("Invalid invoke function name.")
@@ -1967,6 +1973,8 @@ func (t *TF) Query(stub shim.ChaincodeStubInterface, function string, args []str
 		return t.po.getAllDocsPO(stub, args[0])
 	}else if function == "getInvoice" {
 		return t.po.getInvoice(stub, args[0])
+	}else if function == "getLC" {
+		return t.po.getLC(stub, args[0])
 	}
 
 	return nil, errors.New("Invalid query function name.")

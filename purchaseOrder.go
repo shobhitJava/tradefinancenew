@@ -497,21 +497,30 @@ func (t *PurchaseOrder) getLC(stub shim.ChaincodeStubInterface, args string) ([]
 //accept LC
 func (t *PurchaseOrder) acceptLC(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var po map[string]string
-	
-	logger.Info("acceptLC called ")
+	var jsonResp string
+	logger.Info("acceptInvoice called ")
 
 	poNumber := args[0] //PO num
 	//who :=args[1] //Role
 	
-		recBytes, _ := stub.GetState(poNumber)
+		recBytes, err := stub.GetState(poNumber)
+		if err != nil {
+			jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
+			return nil, errors.New(jsonResp)
+		}
+		if recBytes == nil {
+			jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
+			return []byte(jsonResp), nil
+
+		}
 		newerr := json.Unmarshal(recBytes, &po)
 		if newerr != nil {
-			return nil, errors.New("Failed to unmarshal acceptLC ")
+			return nil, errors.New("Failed to unmarshal getRecord ")
 		}
-		po["LcStatus"] = args[1]
+	
+		po["LCStatus"] = args[1]
 		outputBytes, _ := json.Marshal(po)
 		stub.PutState(poNumber, outputBytes)
-	
 	return nil, nil
 }
 //accept Invoice

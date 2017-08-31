@@ -506,7 +506,7 @@ func (t *PurchaseOrder) acceptLC(stub shim.ChaincodeStubInterface, args []string
 	outputBytes, _ := json.Marshal(record)
 	
 	
-	stub.PutState(args[0], outputBytes)
+	stub.PutState(args[0], []byte(outputBytes))
 	return nil, nil
 }
 //accept Invoice
@@ -522,6 +522,6 @@ func (t *PurchaseOrder) acceptInvoice(stub shim.ChaincodeStubInterface, args []s
 	
 	outputBytes, _ := json.Marshal(record)
 	
-	stub.PutState(args[0], outputBytes)
+	stub.PutState(args[0], []byte(outputBytes))
 	return nil, nil
 }

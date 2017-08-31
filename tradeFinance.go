@@ -1726,9 +1726,8 @@ func (t *TF) Invoke(stub shim.ChaincodeStubInterface, function string, args []st
 	}else if function == "uploadInvoice" {
 
 		return t.po.uploadInvoice(stub, args)
-	}else if function == "updateLc" {
-		
-		return t.po.updateLc(stub, args)
+	}else if function == "acceptClass" {
+		return t.po.acceptClass(stub, args)
 	}else if function == "acceptInvoice" {
 
 		return t.po.acceptInvoice(stub, args)

@@ -501,10 +501,11 @@ func (t *PurchaseOrder) acceptLC(stub shim.ChaincodeStubInterface, args []string
 	var record map[string]string
 	json.Unmarshal(recBytes, &record)
 
-	var lc map[string]string
-	json.Unmarshal([]byte(record["LC"]), &lc)
-	lc["LCStatus"] = args[1]
-	outputBytes, _ := json.Marshal(lc)
+	
+	record["LCStatus"] = args[1]
+	outputBytes, _ := json.Marshal(record)
+	
+	
 	stub.PutState(args[0], outputBytes)
 	return nil, nil
 }
@@ -516,10 +517,11 @@ func (t *PurchaseOrder) acceptInvoice(stub shim.ChaincodeStubInterface, args []s
 	var record map[string]string
 	json.Unmarshal(recBytes, &record)
 
-	var lc map[string]string
-	json.Unmarshal([]byte(record["Invoice"]), &lc)
-	lc["InvoiceStatus"] = args[1]
-	outputBytes, _ := json.Marshal(lc)
+	record["InvoiceStatus"] = args[1]
+	
+	
+	outputBytes, _ := json.Marshal(record)
+	
 	stub.PutState(args[0], outputBytes)
 	return nil, nil
 }

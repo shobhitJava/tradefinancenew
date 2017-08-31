@@ -1726,7 +1726,7 @@ func (t *TF) Invoke(stub shim.ChaincodeStubInterface, function string, args []st
 	}else if function == "uploadInvoice" {
 
 		return t.po.uploadInvoice(stub, args)
-	}else if function == "acceptLC" {
+	}else if function == "acceptLCStatus" {
 		logger.Info("in calling from lc" )
 		return t.po.acceptLC(stub, args)
 	}else if function == "acceptInvoice" {

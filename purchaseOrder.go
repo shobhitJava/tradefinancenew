@@ -495,33 +495,59 @@ func (t *PurchaseOrder) getLC(stub shim.ChaincodeStubInterface, args string) ([]
 
 //accept LC
 func (t *PurchaseOrder) acceptLC(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	logger.Info("acceptLC called")
+	var po map[string]string
+	var jsonResp string
+	logger.Info("acceptLC called ")
 
-	recBytes, _ := t.getPoDetails(stub, args[0])
-	var record map[string]string
-	json.Unmarshal(recBytes, &record)
+	poNumber := args[0] //PO num
+	//who :=args[1] //Role
+	
+		recBytes, err := stub.GetState(poNumber)
+		if err != nil {
+			jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
+			return nil, errors.New(jsonResp)
+		}
+		if recBytes == nil {
+			jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
+			return []byte(jsonResp), nil
 
+		}
+		newerr := json.Unmarshal(recBytes, &po)
+		if newerr != nil {
+			return nil, errors.New("Failed to unmarshal getRecord ")
+		}
 	
-	record["LCStatus"] = args[1]
-	outputBytes, _ := json.Marshal(record)
-	
-	
-	stub.PutState(args[0], []byte(outputBytes))
+		po["LCStatus"] = args[1]
+		outputBytes, _ := json.Marshal(po)
+		stub.PutState(poNumber, outputBytes)
 	return nil, nil
 }
 //accept Invoice
 func (t *PurchaseOrder) acceptInvoice(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	logger.Info("acceptInvoice called")
+	var po map[string]string
+	var jsonResp string
+	logger.Info("acceptInvoice called ")
 
-	recBytes, _ := t.getPoDetails(stub, args[0])
-	var record map[string]string
-	json.Unmarshal(recBytes, &record)
+	poNumber := args[0] //PO num
+	//who :=args[1] //Role
+	
+		recBytes, err := stub.GetState(poNumber)
+		if err != nil {
+			jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
+			return nil, errors.New(jsonResp)
+		}
+		if recBytes == nil {
+			jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
+			return []byte(jsonResp), nil
 
-	record["InvoiceStatus"] = args[1]
+		}
+		newerr := json.Unmarshal(recBytes, &po)
+		if newerr != nil {
+			return nil, errors.New("Failed to unmarshal getRecord ")
+		}
 	
-	
-	outputBytes, _ := json.Marshal(record)
-	
-	stub.PutState(args[0], []byte(outputBytes))
+		po["InvoiceStatus"] = args[1]
+		outputBytes, _ := json.Marshal(po)
+		stub.PutState(poNumber, outputBytes)
 	return nil, nil
 }

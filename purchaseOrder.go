@@ -221,6 +221,7 @@ func (t *PurchaseOrder) updatePOStatus(stub shim.ChaincodeStubInterface, args []
 
 	poNumber := args[0] //PO num
 	//who :=args[1] //Role
+	
 	if args[2] == "Exporter" {
 		recBytes, err := stub.GetState(poNumber)
 		if err != nil {
@@ -496,30 +497,21 @@ func (t *PurchaseOrder) getLC(stub shim.ChaincodeStubInterface, args string) ([]
 //accept LC
 func (t *PurchaseOrder) acceptLC(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var po map[string]string
-	var jsonResp string
+	
 	logger.Info("acceptLC called ")
 
 	poNumber := args[0] //PO num
 	//who :=args[1] //Role
 	
-		recBytes, err := stub.GetState(poNumber)
-		if err != nil {
-			jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
-			return nil, errors.New(jsonResp)
-		}
-		if recBytes == nil {
-			jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
-			return []byte(jsonResp), nil
-
-		}
+		recBytes, _ := stub.GetState(poNumber)
 		newerr := json.Unmarshal(recBytes, &po)
 		if newerr != nil {
-			return nil, errors.New("Failed to unmarshal getRecord ")
+			return nil, errors.New("Failed to unmarshal acceptLC ")
 		}
-	
-		po["LCStatus"] = args[1]
+		po["LcStatus"] = args[1]
 		outputBytes, _ := json.Marshal(po)
 		stub.PutState(poNumber, outputBytes)
+	
 	return nil, nil
 }
 //accept Invoice

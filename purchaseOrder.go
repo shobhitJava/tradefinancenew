@@ -495,7 +495,7 @@ func (t *PurchaseOrder) getLC(stub shim.ChaincodeStubInterface, args string) ([]
 
 
 //accept LC
-func (t *PurchaseOrder) updateLc(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func (t *PurchaseOrder) acceptClass(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var po map[string]string
 	var jsonResp string
 	logger.Info("accpetLc called ")

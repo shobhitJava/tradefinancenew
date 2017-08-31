@@ -518,7 +518,7 @@ func (t *PurchaseOrder) updateLc(stub shim.ChaincodeStubInterface, args []string
 			return nil, errors.New("Failed to unmarshal getRecord ")
 		}
 	
-		po["LCStatus"] = args[1]
+		po["LcStatus"] = args[1]
 		outputBytes, _ := json.Marshal(po)
 		stub.PutState(poNumber, outputBytes)
 	return nil, nil

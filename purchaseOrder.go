@@ -403,21 +403,23 @@ func (t *PurchaseOrder) getAllBOLShippingCompany(stub shim.ChaincodeStubInterfac
 	if err != nil {
 		return nil, errors.New("Unable to get all the records ")
 	}
-	var outputRecords []map[string]string
-	outputRecords = make([]map[string]string, 0)
+	var outputRecords []string
+	outputRecords = make([]string, 0)
 	for _, value := range recordsList {
 		recBytes, _ := t.getPoDetails(stub, value)
 
 		var record map[string]string
-		var bol map[string]string
+		var bol string
 		json.Unmarshal(recBytes, &record)
 		record["ContractId"] = value
 		if args[0] == record["ShippingCompany"] {
 
 			json.Unmarshal([]byte(record["BOL"]), &bol)
+			if record["BOL"]!=""{
 			outputRecords = append(outputRecords, bol)
+			
 		}
-	}
+	}}
 	outputBytes, _ := json.Marshal(outputRecords)
 	logger.Info("Returning records from getAllBOLShippingCompany " + string(outputBytes))
 	return outputBytes, nil

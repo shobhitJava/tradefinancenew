@@ -426,10 +426,20 @@ func (t *PurchaseOrder) getAllBOLShippingCompany(stub shim.ChaincodeStubInterfac
 //get all docs for PO
 func (t *PurchaseOrder) getAllDocsPO(stub shim.ChaincodeStubInterface, args string) ([]byte, error) {
 	logger.Info("getAllDocs called")
+	var jsonResp string
 	var outputRecords []map[string]string
 	outputRecords = make([]map[string]string, 0)
 
-	recBytes, _ := t.getPoDetails(stub, args)
+	recBytes, err := t.getPoDetails(stub, args)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " +args+ "\"}"
+		return nil, errors.New(jsonResp)
+	}
+	if recBytes == nil {
+		jsonResp = "{\"Message\":\"No record exists for " + args + "\"}"
+		return []byte(jsonResp), nil
+
+	}
 	var record map[string]string
 	json.Unmarshal(recBytes, &record)
 	var bol map[string]string
@@ -450,8 +460,18 @@ func (t *PurchaseOrder) getAllDocsPO(stub shim.ChaincodeStubInterface, args stri
 //get all invoice
 func (t *PurchaseOrder) getInvoice(stub shim.ChaincodeStubInterface, args string) ([]byte, error) {
 	logger.Info("getInvoice called")
+	var jsonResp string
 
-	recBytes, _ := t.getPoDetails(stub, args)
+	recBytes, err := t.getPoDetails(stub, args)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + args + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+	if recBytes == nil {
+		jsonResp = "{\"Message\":\"No record exists for " + args + "\"}"
+		return []byte(jsonResp), nil
+
+	}
 	var record map[string]string
 	json.Unmarshal(recBytes, &record)
 
@@ -467,8 +487,17 @@ func (t *PurchaseOrder) getInvoice(stub shim.ChaincodeStubInterface, args string
 //get LC
 func (t *PurchaseOrder) getLC(stub shim.ChaincodeStubInterface, args string) ([]byte, error) {
 	logger.Info("getLC called")
+var jsonResp string
+	recBytes, err := t.getPoDetails(stub, args)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + args + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+	if recBytes == nil {
+		jsonResp = "{\"Message\":\"No record exists for " + args + "\"}"
+		return []byte(jsonResp), nil
 
-	recBytes, _ := t.getPoDetails(stub, args)
+	}
 	var record map[string]string
 	json.Unmarshal(recBytes, &record)
 

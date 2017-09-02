@@ -227,7 +227,7 @@ func (t *PurchaseOrder) updatePOStatus(stub shim.ChaincodeStubInterface, args []
 		if newerr != nil {
 			return nil, errors.New("Failed to unmarshal getAllRecordsList ")
 		}
-		po["LcStatus"] = args[1]
+		po["	"] = args[1]
 		outputBytes, _ := json.Marshal(po)
 		stub.PutState(poNumber, outputBytes)
 	
@@ -296,6 +296,7 @@ func (t *PurchaseOrder) uploadBOL(stub shim.ChaincodeStubInterface, args []strin
 		return nil, errors.New("Failed to unmarshal getRecord ")
 	}
 	po["BOL"] = args[1]
+	po["viewbol"]="true"
 	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
 
@@ -328,6 +329,7 @@ func (t *PurchaseOrder) uploadBOE(stub shim.ChaincodeStubInterface, args []strin
 		return nil, errors.New("Failed to unmarshal getRecord ")
 	}
 	po["BOE"] = args[1]
+	po["viewboe"]="true"
 	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
 
@@ -359,6 +361,7 @@ func (t *PurchaseOrder) uploadLC(stub shim.ChaincodeStubInterface, args []string
 		return nil, errors.New("Failed to unmarshal getRecord ")
 	}
 	po["LC"] = args[1]
+	po["viewlc"]="true"
 	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
 
@@ -389,7 +392,7 @@ func (t *PurchaseOrder) uploadInvoice(stub shim.ChaincodeStubInterface, args []s
 	if newerr != nil {
 		return nil, errors.New("Failed to unmarshal getRecord")
 	}
-	po["Invoice"] = args[1]
+	po["viewinvoice"] = args[1]
 	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
 

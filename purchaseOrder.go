@@ -413,7 +413,9 @@ func (t *PurchaseOrder) getAllBOLShippingCompany(stub shim.ChaincodeStubInterfac
 		json.Unmarshal(recBytes, &record)
 		if record["ShippingCompany"] == args[0]{
 		 fmt.Println(record["BOL"])
+		 if record["BOL"] != ""{
 		bol = append(bol, record["BOL"])
+		 }
 		}
 	}
 	outputBytes, _ := json.Marshal(bol)

@@ -572,3 +572,32 @@ func (t *PurchaseOrder) acceptInvoice(stub shim.ChaincodeStubInterface, args []s
 		stub.PutState(poNumber, outputBytes)
 	return nil, nil
 }
+//acceptPayment
+func (t *PurchaseOrder) acceptPayment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var po map[string]string
+	var jsonResp string
+	logger.Info("acceptPayment called ")
+
+	poNumber := args[0] //PO num
+	//who :=args[1] //Role
+	
+		recBytes, err := stub.GetState(poNumber)
+		if err != nil {
+			jsonResp = "{\"Error\":\"Failed to get state for " + poNumber + "\"}"
+			return nil, errors.New(jsonResp)
+		}
+		if recBytes == nil {
+			jsonResp = "{\"Message\":\"No record exists for " + poNumber + "\"}"
+			return []byte(jsonResp), nil
+
+		}
+		newerr := json.Unmarshal(recBytes, &po)
+		if newerr != nil {
+			return nil, errors.New("Failed to unmarshal getRecord ")
+		}
+	
+		po["PaymentStatus"] = args[1]
+		outputBytes, _ := json.Marshal(po)
+		stub.PutState(poNumber, outputBytes)
+	return nil, nil
+}

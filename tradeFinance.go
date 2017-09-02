@@ -1731,6 +1731,9 @@ func (t *TF) Invoke(stub shim.ChaincodeStubInterface, function string, args []st
 	}else if function == "acceptInvoice" {
 
 		return t.po.acceptInvoice(stub, args)
+	}else if function == "acceptPayment" {
+
+		return t.po.acceptPayment(stub, args)
 	}
 	
 	return nil, errors.New("Invalid invoke function name.")

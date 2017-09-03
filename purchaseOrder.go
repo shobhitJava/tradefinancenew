@@ -227,7 +227,7 @@ func (t *PurchaseOrder) updatePOStatus(stub shim.ChaincodeStubInterface, args []
 		if newerr != nil {
 			return nil, errors.New("Failed to unmarshal getAllRecordsList ")
 		}
-		po["	"] = args[1]
+		po["Status"] = args[1]
 		outputBytes, _ := json.Marshal(po)
 		stub.PutState(poNumber, outputBytes)
 	
@@ -601,7 +601,7 @@ func (t *PurchaseOrder) acceptPayment(stub shim.ChaincodeStubInterface, args []s
 		}
 	
 		po["PaymentStatus"] = args[1]
-		po["Status"] = "Payment_Initiated"
+		po["Status"] = args[1]
 		outputBytes, _ := json.Marshal(po)
 		stub.PutState(poNumber, outputBytes)
 	return nil, nil

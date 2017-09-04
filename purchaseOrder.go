@@ -412,6 +412,7 @@ func (t *PurchaseOrder) uploadInvoice(stub shim.ChaincodeStubInterface, args []s
 func (t *PurchaseOrder) getAllBOLShippingCompany(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	logger.Info("getAllBolForShipper called")
 	recordsList, err := getAllRecordsList(stub)
+	var cid string
 	if err != nil {
 		return nil, errors.New("Unable to get all the records ")
 	}
@@ -419,7 +420,8 @@ func (t *PurchaseOrder) getAllBOLShippingCompany(stub shim.ChaincodeStubInterfac
 	outputRecords = make([]map[string]string, 0)
 	for _, value := range recordsList {
 		recBytes, _ := t.getPoDetails(stub, value)
-
+	cid=value
+	
 		var record map[string]string
 		json.Unmarshal(recBytes, &record)
 		
@@ -430,7 +432,7 @@ func (t *PurchaseOrder) getAllBOLShippingCompany(stub shim.ChaincodeStubInterfac
 	outputRecords = append(outputRecords, bol)
 		var id map[string]string
 		
-		json.Unmarshal([]byte(value), &id)
+		json.Unmarshal([]byte(cid), &id)
 		outputRecords = append(outputRecords, id)
 	}
 	}

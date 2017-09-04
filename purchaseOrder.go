@@ -429,12 +429,12 @@ func (t *PurchaseOrder) getAllBOLShippingCompany(stub shim.ChaincodeStubInterfac
 		record["ContractId"] = value
 		if args[0] == record["ShippingCompany"] {
 			if record["BOL"] != "" {
-				bol := make(map[string]string)
+			
 
-				bol["doc"] = record["BOL"]
+					cid["doc"] = record["BOL"]
 
 				outputRecords = append(outputRecords, cid)
-				outputRecords = append(outputRecords, bol)
+				
 
 			}
 		}

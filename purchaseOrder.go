@@ -228,6 +228,7 @@ func (t *PurchaseOrder) updatePOStatus(stub shim.ChaincodeStubInterface, args []
 			return nil, errors.New("Failed to unmarshal getAllRecordsList ")
 		}
 		po["Status"] = args[1]
+		po["Action"]="ImporterBank"
 		outputBytes, _ := json.Marshal(po)
 		stub.PutState(poNumber, outputBytes)
 	
@@ -262,6 +263,7 @@ func (t *PurchaseOrder) updatePODetails(stub shim.ChaincodeStubInterface, args [
 		po["ExporterBank"] = args[1]
 		po["IsLCRequired"] = args[2]
 		po["Status"] = args[3]
+		po["Action"]="ImporterBank"
 		outputBytes, _ := json.Marshal(po)
 		stub.PutState(poNumber, outputBytes)
 	} else {
@@ -297,6 +299,7 @@ func (t *PurchaseOrder) uploadBOL(stub shim.ChaincodeStubInterface, args []strin
 	}
 	po["BOL"] = args[1]
 	po["viewbol"]="true"
+	po["Action"]="Shipper"
 	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
 
@@ -330,6 +333,7 @@ func (t *PurchaseOrder) uploadBOE(stub shim.ChaincodeStubInterface, args []strin
 	}
 	po["BOE"] = args[1]
 	po["viewboe"]="true"
+	po["Action"]="ImporterBank"
 	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
 
@@ -363,6 +367,7 @@ func (t *PurchaseOrder) uploadLC(stub shim.ChaincodeStubInterface, args []string
 	po["LC"] = args[1]
 	po["viewlc"]="true"
 	po["Status"] = "LC_Raised"
+	po["Action"]="ExporterBank"
 	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
 
@@ -396,6 +401,7 @@ func (t *PurchaseOrder) uploadInvoice(stub shim.ChaincodeStubInterface, args []s
 	po["Invoice"] = args[1]
 	po["viewinvoice"] = "true"
 	po["Status"] = "Invoice_Created"
+	po["Action"]="Importer"
 	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
 
@@ -572,6 +578,7 @@ func (t *PurchaseOrder) acceptInvoice(stub shim.ChaincodeStubInterface, args []s
 	
 		po["InvoiceStatus"] = args[1]
 		po["Status"] = "Invoice_Accepted"
+		po["Action"]="ImporterBank"
 		outputBytes, _ := json.Marshal(po)
 		stub.PutState(poNumber, outputBytes)
 	return nil, nil
@@ -602,6 +609,7 @@ func (t *PurchaseOrder) acceptPayment(stub shim.ChaincodeStubInterface, args []s
 	
 		po["PaymentStatus"] = args[1]
 		po["Status"] = args[1]
+		po["Action"]="ExporterBank"
 		outputBytes, _ := json.Marshal(po)
 		stub.PutState(poNumber, outputBytes)
 	return nil, nil

@@ -430,7 +430,7 @@ func (t *PurchaseOrder) getAllBOLShippingCompany(stub shim.ChaincodeStubInterfac
 	outputRecords = append(outputRecords, bol)
 		var id map[string]string
 		
-		json.Unmarshal([]byte(record["ContractId"]), &id)
+		json.Unmarshal([]byte(value), &id)
 		outputRecords = append(outputRecords, id)
 	}
 	}

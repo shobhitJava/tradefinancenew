@@ -410,30 +410,27 @@ func (t *PurchaseOrder) uploadInvoice(stub shim.ChaincodeStubInterface, args []s
 
 //get all the po for shipping company
 func (t *PurchaseOrder) getAllBOLShippingCompany(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	logger.Info("getAllBO called")
-	var bol []string
-	
+	logger.Info("getAllBolForShipper called")
 	recordsList, err := getAllRecordsList(stub)
 	if err != nil {
 		return nil, errors.New("Unable to get all the records ")
 	}
-
+	var outputRecords []map[string]string
+	outputRecords = make([]map[string]string, 0)
 	for _, value := range recordsList {
 		recBytes, _ := t.getPoDetails(stub, value)
 
 		var record map[string]string
 		json.Unmarshal(recBytes, &record)
-		if record["ShippingCompany"] == args[0]{
-		 fmt.Println(record["BOL"])
-		 if record["BOL"] != ""{
-		bol = append(bol, record["BOL"])
-		 }
-		}
+		record["ContractId"] = value
+		outputRecords = append(outputRecords, record)
+		var bol map[string]string
+	json.Unmarshal([]byte(record["BOL"]), &bol)
+	outputRecords = append(outputRecords, bol)
 	}
-	outputBytes, _ := json.Marshal(bol)
-	logger.Info("Returning records from getAllPo " + string(outputBytes))
+	outputBytes, _ := json.Marshal(outputRecords)
+	logger.Info("Returning records from getAllBOLForShipper " + string(outputBytes))
 	return outputBytes, nil
-
 }
 //get all docs for PO
 func (t *PurchaseOrder) getAllDocsPO(stub shim.ChaincodeStubInterface, args string) ([]byte, error) {

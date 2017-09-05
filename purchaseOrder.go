@@ -531,11 +531,11 @@ func (t *PurchaseOrder) getLC(stub shim.ChaincodeStubInterface, args string) ([]
 	return outputBytes, nil
 }
 
-//accept LC
+//change po status
 func (t *PurchaseOrder) acceptClass(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var po map[string]string
 	var jsonResp string
-	logger.Info("accpetLc called ")
+	logger.Info("postatus called ")
 
 	poNumber := args[0] //PO num
 	//who :=args[1] //Role
@@ -555,7 +555,7 @@ func (t *PurchaseOrder) acceptClass(stub shim.ChaincodeStubInterface, args []str
 		return nil, errors.New("Failed to unmarshal getRecord ")
 	}
 
-	po["LcStatus"] = args[1]
+	po["Status"] = args[1]
 	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
 	return nil, nil

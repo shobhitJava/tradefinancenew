@@ -556,6 +556,7 @@ func (t *PurchaseOrder) acceptClass(stub shim.ChaincodeStubInterface, args []str
 	}
 
 	po["Status"] = args[1]
+	po["Action"] = "ImporterBank"
 	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
 	return nil, nil

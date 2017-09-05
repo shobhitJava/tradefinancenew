@@ -227,7 +227,7 @@ func (t *PurchaseOrder) updatePOStatus(stub shim.ChaincodeStubInterface, args []
 		return nil, errors.New("Failed to unmarshal getAllRecordsList ")
 	}
 	po["Status"] = args[1]
-	po["Action"] = "ImporterBank"
+	po["Action"] = "Importer"
 	outputBytes, _ := json.Marshal(po)
 	stub.PutState(poNumber, outputBytes)
 
